@@ -4,6 +4,7 @@ import io.qameta.allure.Description;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static com.atqc.framework.Config.restApiBaseUri;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
@@ -15,7 +16,7 @@ public class UserTest extends RestAPIBaseTest {
 
         given()
                 .contentType("application/json")
-                .baseUri("https://petstore.swagger.io/v2")
+                .baseUri(restApiBaseUri)
                 .header("Access-Token", "dfhdh=validtoken=gfsdfdfh")
                 .body("{\n" +
                         "  \"id\": 0,\n" +
