@@ -31,28 +31,47 @@ public class PetTest extends RestAPIBaseTest{
         put("id", 0);
         put("category", category);
         put("name", "Behemoth");
-        put("photoUrls", Arrays.asList("photohub", "photobook"));
+        put("photoUrls", Arrays.asList("photohub", "facebook"));
         put("tags", tags);
         put("status", "available");
     }};
 
-    @Test
+    @Test(priority = 1)
     @Description("Create a pet with valid data")
     public void positivePostNewPet(){
 
-        Integer petId = given()
+       given()
                 .contentType("application/json")
                 .baseUri(restApiBaseUri)
                 .header("Access-Token", "Token token=token")
                 .body(testPet)
-        .when()
+      .when()
                 .post("/pet")
-        .then()
-                .assertThat().statusCode(200)
+      .then()
+                .assertThat()
+                .statusCode(200)
                 .body("category.name", equalTo("Maine"))
                 .body("tags.name", hasItem("coon"))
                 .body("photoUrls", hasItem("photohub"))
                 .body("name", is("Behemoth"))
-                .extract().path("id");
+                .body("photoUrls", hasSize(2));
     }
+
+    @Test(priority = 2)
+    @Description("Get data of the created pet")
+    public void positiveGetPetData(){
+        given()
+                .contentType("application/json")
+                .baseUri(restApiBaseUri)
+                .header("Access-Token", "Token token=token")
+       .when()
+                .get("/pet/1")
+       .then()
+                .assertThat()
+                .statusCode(200)
+                .body("id", equalTo(1))
+                .body("name", is(notNullValue()));
+
+    }
+
 }
