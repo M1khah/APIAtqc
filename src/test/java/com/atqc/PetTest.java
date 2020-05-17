@@ -2,6 +2,7 @@ package com.atqc;
 
 import io.qameta.allure.Description;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -43,7 +44,6 @@ public class PetTest extends RestAPIBaseTest{
        given()
                 .contentType("application/json")
                 .baseUri(restApiBaseUri)
-                .header("Access-Token", "Token token=token")
                 .body(testPet)
       .when()
                 .post("/pet")
@@ -58,20 +58,48 @@ public class PetTest extends RestAPIBaseTest{
     }
 
     @Test(priority = 2)
-    @Description("Get data of the created pet")
+    @Description("Get data of the pet")
     public void positiveGetPetData(){
         given()
                 .contentType("application/json")
                 .baseUri(restApiBaseUri)
-                .header("Access-Token", "Token token=token")
        .when()
                 .get("/pet/1")
        .then()
                 .assertThat()
                 .statusCode(200)
+                .body("status", hasLength(4))
                 .body("id", equalTo(1))
-                .body("name", is(notNullValue()));
+                .body("name", is(notNullValue()))
+                .body("status", is(not(equalTo("qwerty"))));
+    }
+
+
+
+    @Test(dataProvider = "wrongId")
+    @Description("")
+    public void negativeGetPetsById(String id, int code) {
+
+        given()
+                .contentType("application/json")
+                .baseUri(restApiBaseUri)
+        .when()
+                .get("/pet/{id}", id)
+        .then()
+                .statusCode(code);
 
     }
 
+    @DataProvider(name = "wrongId")
+    private Object[][] provider() {
+
+        return new Object[][] {
+
+                {"", 405},
+                {"!@#$", 404},
+                {"qww", 404},
+                {"dead", 404}
+
+        };
+    }
 }
