@@ -68,8 +68,8 @@ public class PetTest extends RestAPIBaseTest{
        .then()
                 .assertThat()
                 .statusCode(200)
-                .body("status", hasLength(4))
-                .body("id", equalTo(1))
+                .body("name", hasLength(6))
+                .body("id", equalTo(123))
                 .body("name", is(notNullValue()))
                 .body("status", is(not(equalTo("qwerty"))));
     }
