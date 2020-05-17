@@ -64,7 +64,7 @@ public class PetTest extends RestAPIBaseTest{
                 .contentType("application/json")
                 .baseUri(restApiBaseUri)
        .when()
-                .get("/pet/1")
+                .get("/pet/123")
        .then()
                 .assertThat()
                 .statusCode(200)
@@ -76,8 +76,8 @@ public class PetTest extends RestAPIBaseTest{
 
 
 
-    @Test(dataProvider = "wrongId")
-    @Description("")
+    @Test(dataProvider = "wrongId", priority = 3)
+    @Description("Wrong GET requests")
     public void negativeGetPetsById(String id, int code) {
 
         given()
@@ -87,7 +87,6 @@ public class PetTest extends RestAPIBaseTest{
                 .get("/pet/{id}", id)
         .then()
                 .statusCode(code);
-
     }
 
     @DataProvider(name = "wrongId")
