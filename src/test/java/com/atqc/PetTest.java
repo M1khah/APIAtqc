@@ -1,5 +1,7 @@
 package com.atqc;
 
+import com.atqc.models.PetModel;
+import com.github.javafaker.Faker;
 import io.qameta.allure.Description;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -9,6 +11,8 @@ import static org.hamcrest.Matchers.*;
 
 
 public class PetTest extends RestAPIBaseTest{
+
+    Faker faker = new Faker();
 
     Map<String,Object> category = new HashMap<String,Object>() {{
         put("id", 0);
@@ -23,7 +27,6 @@ public class PetTest extends RestAPIBaseTest{
         add(tagMap);
     }};
 
-
     Map<String,Object> testPet = new HashMap<String,Object>() {{
         put("id", 0);
         put("category", category);
@@ -37,7 +40,7 @@ public class PetTest extends RestAPIBaseTest{
     @Description("Create a pet with valid data")
     public void positivePostNewPet(){
 
-       given()
+       PetModel createdValidPet = given()
                 .spec(REQUEST_SPEC)
                 .body(testPet)
       .when()
@@ -48,7 +51,10 @@ public class PetTest extends RestAPIBaseTest{
                 .body("tags.name", hasItem("coon"))
                 .body("photoUrls", hasItem("photohub"))
                 .body("name", is("Behemoth"))
-                .body("photoUrls", hasSize(2));
+                .body("photoUrls", hasSize(2))
+                .extract().as(PetModel.class);
+
+        System.out.println(createdValidPet.getId());
     }
 
     @Test(priority = 2)
@@ -66,8 +72,7 @@ public class PetTest extends RestAPIBaseTest{
                 .body("status", is(not(equalTo("qwerty"))));
     }
 
-
-
+    
     @Test(dataProvider = "wrongId", priority = 3)
     @Description("Wrong GET requests")
     public void negativeGetPetsById(String id, int code) {

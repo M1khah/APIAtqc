@@ -1,5 +1,6 @@
 package com.atqc;
 
+import com.atqc.models.PetModel;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -7,8 +8,8 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.BeforeSuite;
-
 import static com.atqc.framework.Config.restApiBaseUri;
+import static io.restassured.RestAssured.given;
 
 public class RestAPIBaseTest {
 
@@ -27,5 +28,16 @@ public class RestAPIBaseTest {
                 new ResponseLoggingFilter()
         );
 
+    }
+
+    public long getPetID(){
+        return given()
+                .spec(REQUEST_SPEC)
+                .body(PetModel.positiveCreatePet())
+        .when()
+                .post("/pet")
+        .then()
+                .statusCode(200)
+                .extract().jsonPath().getLong("id");
     }
 }
