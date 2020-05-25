@@ -1,13 +1,9 @@
 package com.atqc;
 
 import io.qameta.allure.Description;
-
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
 import java.util.*;
-
-import static com.atqc.framework.Config.restApiBaseUri;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
@@ -42,13 +38,11 @@ public class PetTest extends RestAPIBaseTest{
     public void positivePostNewPet(){
 
        given()
-                .contentType("application/json")
-                .baseUri(restApiBaseUri)
+                .spec(REQUEST_SPEC)
                 .body(testPet)
       .when()
                 .post("/pet")
       .then()
-                .assertThat()
                 .statusCode(200)
                 .body("category.name", equalTo("Maine"))
                 .body("tags.name", hasItem("coon"))
@@ -61,12 +55,10 @@ public class PetTest extends RestAPIBaseTest{
     @Description("Get data of the pet")
     public void positiveGetPetData(){
         given()
-                .contentType("application/json")
-                .baseUri(restApiBaseUri)
+                .spec(REQUEST_SPEC)
        .when()
                 .get("/pet/123")
        .then()
-                .assertThat()
                 .statusCode(200)
                 .body("name", hasLength(6))
                 .body("id", equalTo(123))
@@ -81,8 +73,7 @@ public class PetTest extends RestAPIBaseTest{
     public void negativeGetPetsById(String id, int code) {
 
         given()
-                .contentType("application/json")
-                .baseUri(restApiBaseUri)
+                .spec(REQUEST_SPEC)
         .when()
                 .get("/pet/{id}", id)
         .then()

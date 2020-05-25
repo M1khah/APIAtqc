@@ -4,7 +4,6 @@
     <test name="Homework">
         <classes>
             <class name="com.atqc.UserTest"/>
-            <class name="com.atqc.PetTest"></class>
         </classes>
     </test>
 </suite>
