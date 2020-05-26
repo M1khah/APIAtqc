@@ -58,7 +58,7 @@ public class PetModel {
 
     public static PetModel negativeCreatePetWrongId(){
         return PetModel.builder()
-                .id(faker.number().numberBetween(-5, -1))
+                .id(faker.number().numberBetween(-99999, -1))
                 .name(faker.matz().quote())
                 .petStatus(PetStatus.SOLD)
                 .photoUrls(Arrays.asList(faker.internet().url(), faker.internet().url()))
