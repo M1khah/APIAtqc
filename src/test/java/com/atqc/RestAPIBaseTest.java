@@ -17,6 +17,7 @@ public class RestAPIBaseTest {
             new RequestSpecBuilder()
                     .setContentType("application/json")
                     .setBaseUri(restApiBaseUri)
+                    .setBasePath("/pet")
                     .build();
 
     @BeforeSuite
@@ -30,7 +31,7 @@ public class RestAPIBaseTest {
 
     }
 
-    public long getPetID(){
+    public static long getPetID(){
         return given()
                 .spec(REQUEST_SPEC)
                 .body(PetModel.positiveCreatePet())
