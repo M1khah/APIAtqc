@@ -3,7 +3,7 @@
 <suite name="REST API" parallel="false">
     <test name="Homework">
         <classes>
-            <class name="com.atqc.UserTest"/>
+            <class name="com.atqc.PetTest"/>
         </classes>
     </test>
 </suite>

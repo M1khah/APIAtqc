@@ -4,17 +4,15 @@ import com.atqc.models.PetModel;
 import com.github.javafaker.Faker;
 import com.google.common.collect.ImmutableMap;
 import io.qameta.allure.Description;
-import io.restassured.response.ValidatableResponse;
 import org.hamcrest.Matchers;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import java.util.*;
-
+import static com.atqc.models.PetModel.positiveUpdate;
 import static io.restassured.RestAssured.basePath;
 import static io.restassured.RestAssured.given;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
-
 
 public class PetTest extends RestAPIBaseTest{
 
@@ -45,35 +43,36 @@ public class PetTest extends RestAPIBaseTest{
     @Test(priority = 1)
     @Description("Create a pet with valid data")
     public void positivePostNewPet(){
-
-       ValidatableResponse pet = given()
+       given()
                 .spec(REQUEST_SPEC)
                 .body(testPet)
-      .when()
+       .when()
                 .post(basePath)
-      .then()
+       .then()
                 .statusCode(200)
                 .body("category.name", equalTo("Maine"))
                 .body("tags.name", hasItem("coon"))
                 .body("photoUrls", hasItem("photohub"))
                 .body("name", is("Behemoth"));
-       pet.extract().jsonPath().getLong("id");
     }
 
 
     @Test(priority = 2)
     @Description("Get data of the pet")
-    public void positiveGetPetData(long petID){
+    public void positiveGetPetData(){
+
+        PetModel pet = getPet();
+        int petId = Math.toIntExact(pet.getId());
+
         given()
                 .spec(REQUEST_SPEC)
        .when()
-                .get("/pet/{petID}", petID)
+                .get("/{petId}", petId)
        .then()
                 .statusCode(200)
-                .body("name", hasLength(6))
-                .body("id", equalTo(123))
-                .body("name", is(notNullValue()))
-                .body("status", is(not(equalTo("qwerty"))));
+                .body("id", is(petId))
+                .body("name", is(pet.getName()))
+                .body("photoUrls", is(notNullValue()));
     }
 
     @Test(dataProvider = "wrongId", priority = 3)
@@ -156,7 +155,7 @@ public class PetTest extends RestAPIBaseTest{
 
     @Test(priority = 8)
     @Description("Update pet with no body")
-    public void negativeUpdatePet(){
+    public void negativeUpdatePetNoBody(){
         given()
                 .spec(REQUEST_SPEC)
                 .body("")
@@ -180,13 +179,30 @@ public class PetTest extends RestAPIBaseTest{
                 .statusCode(200);
     }
 
+    @Test(priority = 10)
+    @Description("Update created Pet")
+    public void positiveUpdateCreatedPet(){
+
+        PetModel updatedPet = positiveUpdate();
+        int updatedPetId = Math.toIntExact(updatedPet.getId());
+
+        given()
+                .spec(REQUEST_SPEC)
+                .body(updatedPet)
+        .when()
+                .put(basePath)
+        .then()
+                .statusCode(200)
+                .body("id", is(updatedPetId))
+                .body("name", is(updatedPet.getName()));
+    }
+
     ImmutableMap<String,?> becauseWeNeedGuava = ImmutableMap.<String, Object>builder()
             .put("name", faker.ancient().titan())
             .put("id",faker.number().randomDigit())
             .build();
 
-
-    @Test(priority = 10)
+    @Test(priority = 11)
     @Description("Create a pet with Guava")
     public void createPetWithGuava(){
         given()

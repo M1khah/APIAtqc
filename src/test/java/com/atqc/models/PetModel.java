@@ -1,5 +1,6 @@
 package com.atqc.models;
 
+import com.atqc.RestAPIBaseTest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.javafaker.Faker;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PetModel {
+public class PetModel extends RestAPIBaseTest {
 
     static Faker faker = new Faker();
 
@@ -60,9 +61,19 @@ public class PetModel {
         return PetModel.builder()
                 .id(faker.number().numberBetween(-99999, -1))
                 .name(faker.matz().quote())
-                .petStatus(PetStatus.SOLD)
+                .petStatus(PetStatus.PENDING)
                 .photoUrls(Arrays.asList(faker.internet().url(), faker.internet().url()))
                 .build();
     }
 
+    public static PetModel positiveUpdate(){
+
+        PetModel pet = getPet();
+        int petId = Math.toIntExact(pet.getId());
+
+        return PetModel.builder()
+                .id(petId)
+                .name(faker.ancient().god())
+                .build();
+    }
 }
