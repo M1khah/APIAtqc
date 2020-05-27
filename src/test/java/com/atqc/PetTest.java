@@ -167,8 +167,9 @@ public class PetTest extends RestAPIBaseTest{
                 .body("message", is("no data"));
     }
 
+
     @Test(priority = 9)
-    @Description("Update pet wrong id") //Should be an error and negative test, but this API accepts anything))
+    @Description("Update pet negative id") //Should be an error and negative test, but this API accepts anything))
     public void negativeUpdatePetWrongId(){
         given()
                 .spec(REQUEST_SPEC)
@@ -214,5 +215,23 @@ public class PetTest extends RestAPIBaseTest{
                 .statusCode(200)
                 .body("name", is(becauseWeNeedGuava.get("name")))
                 .body("id", equalTo(becauseWeNeedGuava.get("id")));
+    }
+
+    ImmutableMap<String,?> negativeUpdateStringId = ImmutableMap.<String, Object>builder()
+            .put("name", faker.ancient().titan())
+            .put("id",faker.chuckNorris().fact())
+            .build();
+
+    @Test(priority = 12)
+    @Description("Update pet with String id")
+    public void negativeUpdateStringId(){
+        given()
+                .spec(REQUEST_SPEC)
+                .body(negativeUpdateStringId)
+        .when()
+                .put(basePath)
+        .then()
+                .statusCode(500)
+                .body("message", is("something bad happened"));
     }
 }
